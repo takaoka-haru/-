@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card型メモ帳サンプル</title>
+    <style>
+        #main{
+            background-color: blue;
+            color: aliceblue;
+            display:flex;
+            flex-wrap:wrap;
+            justify-content: flex-start;
+        }
+        div{
+            margin: 5px;
+            width: 300px;
+        }
+        .new{
+            border: 5px solid yellow;
+        }
+    </style>
+</head>
+<body>
+    <button id="add">追加</button>
+    <button id="save">保存</button>
+    <button id="remove">全削除</button>
+    <main id="main">
+    </main>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        let c = 0;
+        $("#add").on("click",function(){
+            $("#main>div").removeClass("new")
+            c++;
+            const html = `
+                <div class="new">${c}<textarea id="add_${c}" class="memo"></textarea></div>
+            `;
+            $("#main").append(html);
+        });
+
+        $("#save").on("click",function(){
+            const len = $(".memo").length;
+            let ary =[];
+            for(let i=0; i<len; i++){
+                ary[i] = $("#add_"+(i+1)).val();
+            }
+            localStorage.setItem("card",JSON.stringify(ary));
+        })
+
+        $("#remove").on("click",function(){
+            localStorage.clear();
+            $("#main").empty();
+            c=0;
+        })
+
+        window.onload=function(){
+            const ary = JSON.parse(localStorage.getItem("card"));
+            if(ary !== null){
+                for(let i=0; i<ary.length; i++){
+                    const html = `
+                        <div>${i+1}<textarea id="add_${i+1}" class="memo">${ary[i]}</textarea></div>
+                    `;
+                    $("#main").append(html);
+                    c = i+1;
+                }    
+            }
+        }
+    </script>
+</body>
+</html>
